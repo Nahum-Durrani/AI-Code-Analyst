@@ -10,8 +10,6 @@ An AI-powered code review and improvement tool built with React, Tailwind CSS, M
 - 🛠️ **Fix Code**: One-click AI-powered refactoring
 - 🌙 **Dark/Light Mode**: Fully responsive UI with toggle
 - 🧠 Powered by **Google Gemini API**
-- 🧑‍💻 Monaco Editor integration for real-time code editing
-
 ---
 
 ## 📸 Preview
@@ -25,13 +23,7 @@ An AI-powered code review and improvement tool built with React, Tailwind CSS, M
 
 - **React**
 - **Tailwind CSS**
-- **Vite**
-- **Monaco Editor**
 - **Google Gemini API**
-- **Lucide React Icons**
-- **React Select**
-- **React Markdown**
-- **React Spinners**
 
 ---
 
