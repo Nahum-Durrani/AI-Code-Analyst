@@ -14,7 +14,7 @@ An AI-powered code review and improvement tool built with React, Tailwind CSS, a
 
 ## 📸 Preview
 
-![Dark Mode Screenshot](./screenshots/light-mode.png)
+![Dark Mode Screenshot](screenshots/ai-code-analyst-darkmode.png)
 ![Light Mode Screenshot](./screenshots/light-mode.png)
 
 ---
