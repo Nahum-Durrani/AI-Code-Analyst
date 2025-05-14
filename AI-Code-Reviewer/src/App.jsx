@@ -32,53 +32,55 @@ const App = () => {
   ];
 
   const [selectedOption, setSelectedOption] = useState(options[0]);
+  const [code, setCode] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [response, setResponse] = useState("");
+  const [isDarkMode, setIsDarkMode] = useState(true);
+
+  const ai = new GoogleGenAI({ apiKey: "AIzaSyA61qMvJPOvufQjEvB4NRoTjHO3xPJco50" });
 
   const customStyles = {
     control: (provided) => ({
       ...provided,
-      backgroundColor: '#18181b', // dark background (similar to bg-zinc-900)
-      borderColor: '#3f3f46',
-      color: '#fff',
+      backgroundColor: isDarkMode ? '#18181b' : '#f3f4f6',
+      borderColor: isDarkMode ? '#3f3f46' : '#d1d5db',
+      color: isDarkMode ? '#fff' : '#000',
       width: "100%"
     }),
     menu: (provided) => ({
       ...provided,
-      backgroundColor: '#18181b', // dropdown bg
-      color: '#fff',
+      backgroundColor: isDarkMode ? '#18181b' : '#fff',
+      color: isDarkMode ? '#fff' : '#000',
+      zIndex: 100,
       width: "100%"
     }),
     singleValue: (provided) => ({
       ...provided,
-      color: '#fff',  // selected option text
+      color: isDarkMode ? '#fff' : '#000',
       width: "100%"
     }),
     option: (provided, state) => ({
       ...provided,
-      backgroundColor: state.isFocused ? '#27272a' : '#18181b',  // hover effect
-      color: '#fff',
-      cursor: 'pointer',
-      // width: "30%"
+      backgroundColor: state.isFocused
+        ? (isDarkMode ? '#27272a' : '#e5e7eb')
+        : (isDarkMode ? '#18181b' : '#fff'),
+      color: isDarkMode ? '#fff' : '#000',
+      cursor: 'pointer'
     }),
     input: (provided) => ({
       ...provided,
-      color: '#fff',
+      color: isDarkMode ? '#fff' : '#000',
       width: "100%"
     }),
     placeholder: (provided) => ({
       ...provided,
-      color: '#a1a1aa',  // placeholder text color
+      color: isDarkMode ? '#a1a1aa' : '#6b7280',
       width: "100%"
     }),
   };
 
-  const [code, setCode] = useState("");
-
-  const ai = new GoogleGenAI({ apiKey: "AIzaSyA61qMvJPOvufQjEvB4NRoTjHO3xPJco50" }); // replace "YOUR_API_KEY" with you api key
-  const [loading, setLoading] = useState(false);
-  const [response, setResponse] = useState("");
-
   async function reviewCode() {
-    setResponse("")
+    setResponse("");
     setLoading(true);
     const response = await ai.models.generateContent({
       model: "gemini-2.0-flash",
@@ -98,43 +100,55 @@ Analyze it like a senior developer reviewing a pull request.
 Code: ${code}
 `,
     });
-    setResponse(response.text)
+    setResponse(response.text);
     setLoading(false);
   }
 
-
   return (
     <>
-      <Navbar />
-      <div className="main flex justify-between" style={{ height: "calc(100vh - 90px" }}>
-        <div className="left h-[87.5%] w-[50%]">
-          <div className="tabs !mt-5 !px-5 !mb-3 w-full flex items-center gap-[10px]">
-            <Select
-              value={selectedOption}
-              onChange={(e) => { setSelectedOption(e) }}
-              options={options}
-              styles={customStyles}
+      <Navbar isDarkMode={isDarkMode} toggleTheme={() => setIsDarkMode(!isDarkMode)} />
+      <div className={`${isDarkMode ? 'bg-black text-white' : 'bg-white text-black'} min-h-screen`}>
+        <div className="flex justify-between" style={{ height: "calc(100vh - 90px)" }}>
+          <div className="left h-[87.5%] w-[50%]">
+            <div className="tabs mt-5 px-5 mb-3 w-full flex items-center gap-[10px]">
+              <Select
+                value={selectedOption}
+                onChange={(e) => { setSelectedOption(e) }}
+                options={options}
+                styles={customStyles}
+                menuPortalTarget={document.body}
+              />
+              <button className="btnNormal bg-zinc-900 min-w-[120px] transition-all hover:bg-zinc-800">Fix Code</button>
+              <button
+                onClick={() => {
+                  if (code === "") {
+                    alert("Please enter code first");
+                  } else {
+                    reviewCode();
+                  }
+                }}
+                className="btnNormal bg-zinc-900 min-w-[120px] transition-all hover:bg-zinc-800"
+              >
+                Review
+              </button>
+            </div>
+
+            <Editor
+              height="100%"
+              theme={isDarkMode ? 'vs-dark' : 'light'}
+              language={selectedOption.value}
+              value={code}
+              onChange={(e) => { setCode(e) }}
             />
-            <button className="btnNormal bg-zinc-900 min-w-[120px] transition-all hover:bg-zinc-800">Fix Code</button>
-            <button onClick={() => {
-              if (code === "") {
-                alert("Please enter code first")
-              }
-              else {
-                reviewCode()
-              }
-            }} className="btnNormal bg-zinc-900 min-w-[120px] transition-all hover:bg-zinc-800">Review</button>
           </div>
 
-          <Editor height="100%" theme='vs-dark' language={selectedOption.value} value={code} onChange={(e) => { setCode(e) }} />
-        </div>
-
-        <div className="right overflow-scroll !p-[10px] bg-zinc-900 w-[50%] h-[101%]">
-          <div className="topTab border-b-[1px] border-t-[1px] border-[#27272a] flex items-center justif-between h-[60px]">
-            <p className='font-[700] text-[17px]'>Response</p>
+          <div className={`right overflow-scroll p-[10px] ${isDarkMode ? 'bg-zinc-900' : 'bg-gray-100'} w-[50%] h-[101%]`}>
+            <div className="topTab border-b border-t border-zinc-700 flex items-center h-[60px]">
+              <p className='font-bold text-[17px]'>Response</p>
+            </div>
+            {loading && <RingLoader color='#9333ea' />}
+            <Markdown>{response}</Markdown>
           </div>
-          {loading && <RingLoader color='#9333ea' />}
-          <Markdown>{response}</Markdown>
         </div>
       </div>
     </>
