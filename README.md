@@ -1,6 +1,6 @@
 # 🧠 AI Code Analyst
 
-An AI-powered code review and improvement tool built with React, Tailwind CSS, Monaco Editor, and the Gemini API. It allows developers to write code, analyze it for improvements, and automatically receive cleaner, optimized suggestions using Google's Gemini models.
+An AI-powered code review and improvement tool built with React, Tailwind CSS, and the Gemini API. It allows developers to write code, analyze it for improvements, and automatically receive cleaner, optimized suggestions using Google's Gemini models.
 
 ---
 
